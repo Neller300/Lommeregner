@@ -1,2 +1,0 @@
-# Lommeregner
-Lommeregner projekt
