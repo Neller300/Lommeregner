@@ -1,16 +1,44 @@
 package calculatorPackage;
 
-public class CalculatorMain
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class CalculatorMain extends Application
 {
+		public static void main(String[] args)
+		{
+			launch(args);
+		}
 
-	public static void main(String[] args)
-	{
-		// Create new instance GUICreator. Call it gui
-		// Create new instance DisplayHandler. Call it display
-		// Create new instance CalcResult. Call it thecalculator
-		// Create new instance InputHandler. Call it ihandler
-		
+		@Override
+		public void start(Stage primaryStage)
+		{
+			primaryStage.setTitle("Pro-1-Calculator");
+			//Group abRoot = new Group();
+			
+			
+			// create input Handler
+			InputHandler theIHandler = new InputHandler();
 
+			// create the visuals
+			GUICreator GUI = new GUICreator(theIHandler);
+			primaryStage.setScene(GUI.getScene());
+			primaryStage.show();
+			
+			//primaryStage.setScene(scene);
+			//scene.getStylesheets().add(mainStarter.class.getResource("styleSheetTest.css").toExternalForm());
+			//primaryStage.show();
 	}
 
 }
