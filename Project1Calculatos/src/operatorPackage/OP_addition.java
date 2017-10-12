@@ -2,7 +2,16 @@ package operatorPackage;
 
 public class OP_addition extends OperatorMaster
 {
- //call calc method(?,?)
- //final priority - used to determine when it's being used in calc method.
+	private static final int priority=1;
+	
+	public Double calc(Double par1, Double par2)
+	{
+		return par1+par2;
+	}
+	
 
+	public int getPriority()
+	{
+		return priority;
+	}
 }
