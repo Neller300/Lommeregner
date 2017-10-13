@@ -2,8 +2,10 @@ package calculatorPackage;
 
 import calculatorPackage.calculatorTools.nodeType;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -14,6 +16,8 @@ public class GUICreator
 	public Text text;
 
 	public Scene theScene;
+	
+	public DisplayHandler theDisplay;
 
 	public GUICreator(InputHandler tHandler)
 	{
@@ -26,9 +30,19 @@ public class GUICreator
 		StackPane stack = new StackPane();
 		stack.getChildren().addAll(new Rectangle(430, 165, Color.BLACK));
 		text = new Text();
-		stack.getChildren().add(text);
+		text.setFill(Color.WHITE);
+		text.setStyle("-fx-font: 25 Consolas; -fx-font-weight: bold;");
+		HBox textHolder = new HBox();
+		textHolder.setAlignment(Pos.TOP_LEFT);
+		
+	
+		textHolder.getChildren().add(text);
+		stack.getChildren().add(textHolder);
 		grid.add(stack, 0, 0, 4, 1);
 
+		DisplayHandler.theGUICreator=this;
+		
+		
 		theScene = new Scene(grid, 460, 795);
 
 		ExtButton nul = new ExtButton("0", "0", nodeType.NUMBER, 0, tHandler);
@@ -85,10 +99,10 @@ public class GUICreator
 		ExtButton parentesSlut = new ExtButton(")", ")", nodeType.UTILITY, 0, tHandler);
 		grid.add(parentesSlut, 3, 1);
 
-		ExtButton kvadratrod = new ExtButton("\u221A", "\u221A", nodeType.OPERATOR, 0, tHandler);
+		ExtButton kvadratrod = new ExtButton("\u221A", "\u221A", nodeType.OPERATOR, 1, tHandler);
 		grid.add(kvadratrod, 2, 2);
 
-		ExtButton IAnden = new ExtButton("\u00B2", "x\u00B2", nodeType.OPERATOR, 0, tHandler);
+		ExtButton IAnden = new ExtButton("\u00B2", "x\u00B2", nodeType.OPERATOR, -1, tHandler);
 		grid.add(IAnden, 1, 1);
 
 		ExtButton Clear = new ExtButton("CE", "CE", nodeType.UTILITY, 0, tHandler);

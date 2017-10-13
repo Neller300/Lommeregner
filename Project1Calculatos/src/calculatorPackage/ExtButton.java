@@ -35,7 +35,7 @@ public class ExtButton extends Button{
 		
 		super.setOnMouseClicked((new EventHandler<MouseEvent>() { 
 	         public void handle(MouseEvent event) { 
-		            theInputHandler.handleInput();
+		            theInputHandler.handleInput(type, input, direction);
 		         } 
 		      }));
 }

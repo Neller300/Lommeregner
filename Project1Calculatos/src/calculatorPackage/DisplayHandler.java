@@ -6,15 +6,17 @@ public class DisplayHandler
 {
 	
 	// Declare a Text call it textdisplayed
-	public GUICreator theGUICreator;
+	public static GUICreator theGUICreator;
 	  // Declare method: UpdateScreen(List<inputnodes>)
 	      // for each loop prints input nodes
-	public void updateScreen(List<InputNode> inputNodeList)
+	public static void updateScreen(List<InputNode> inputNodeList)
 	{
+		
 		//go through each node
 		String temp="";
 		for(InputNode node : inputNodeList)
 		{
+			//System.out.println(node.input+" type"+node.itsType+" dir"+node.getOperatorDirection());
 			temp=temp+node.input;
 		}
 		updateScreen(temp);
@@ -29,8 +31,9 @@ public class DisplayHandler
 	          // print "invalid result"
 	
 	
-	public void updateScreen(String result)
+	public static void updateScreen(String result)
 	{
+		
 		theGUICreator.text.setText(result);
 	}
 	

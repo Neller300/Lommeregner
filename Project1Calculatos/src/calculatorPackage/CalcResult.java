@@ -36,7 +36,7 @@ public class CalcResult {
 				// if(is an operator)
 				if(aNode.itsType == nodeType.OPERATOR) 
 				{
-					// Finder højest prioritet
+					// Finder hÃ¸jest prioritet
 					if(aNode.nodePriority > highestPriority) 
 					{
 						bestCandidate = aNode;
