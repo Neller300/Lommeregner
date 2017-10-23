@@ -2,6 +2,9 @@ package calculatorPackage;
 
 import java.util.List;
 
+import calculatorPackage.calculatorTools.displayType;
+import graphPackage.GraphGUI;
+
 public class DisplayHandler
 {
 	
@@ -9,9 +12,8 @@ public class DisplayHandler
 	public static GUICreator theGUICreator;
 	  // Declare method: UpdateScreen(List<inputnodes>)
 	      // for each loop prints input nodes
-	public static void updateScreen(List<InputNode> inputNodeList)
+	public static void updateScreen(List<InputNode> inputNodeList, displayType wantedDisplay)
 	{
-		
 		//go through each node
 		String temp="";
 		for(InputNode node : inputNodeList)
@@ -19,22 +21,26 @@ public class DisplayHandler
 			//System.out.println(node.input+" type"+node.itsType+" dir"+node.getOperatorDirection());
 			temp=temp+node.input;
 		}
-		updateScreen(temp);
+		updateScreen(temp, wantedDisplay);
 	}
-	  
 	
-	  // Declare method: UpdateScreen(Result)
-	     // return result as a string. 
-	       // if result is valid
-	          // print result
-	       // else if result isn't valid
-	          // print "invalid result"
-	
-	
-	public static void updateScreen(String result)
+	public static void updateScreen(String result, displayType wantedDisplay)
 	{
-		
-		theGUICreator.text.setText(result);
+		if(wantedDisplay==displayType.CALCULATOR)
+		{
+			theGUICreator.text.setText(result);
+		}
+		else if(wantedDisplay==displayType.Y1)
+		{
+			GraphGUI.functionMenuDic.get("Y1").setText(result);
+		}
+		else if(wantedDisplay==displayType.Y2)
+		{
+			GraphGUI.functionMenuDic.get("Y2").setText(result);
+		}
+		else if(wantedDisplay==displayType.Y3)
+		{
+			GraphGUI.functionMenuDic.get("Y3").setText(result);
+		}
 	}
-	
 }

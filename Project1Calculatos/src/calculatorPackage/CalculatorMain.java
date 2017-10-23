@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import graphPackage.GraphWindowHandler;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -39,6 +40,8 @@ public class CalculatorMain extends Application
 			//primaryStage.setScene(scene);
 			//scene.getStylesheets().add(mainStarter.class.getResource("styleSheetTest.css").toExternalForm());
 			//primaryStage.show();
+			
+			
 	}
 
 }

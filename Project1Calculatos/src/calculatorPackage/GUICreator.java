@@ -43,7 +43,7 @@ public class GUICreator
 		DisplayHandler.theGUICreator=this;
 		
 		
-		theScene = new Scene(grid, 460, 795);
+		theScene = new Scene(grid, 460, 840);
 
 		ExtButton nul = new ExtButton("0", "0", nodeType.NUMBER, 0, tHandler);
 		grid.add(nul, 1, 6);
@@ -116,6 +116,12 @@ public class GUICreator
 
 		ExtButton Percent = new ExtButton("%", "%", nodeType.UTILITY, 0, tHandler);
 		grid.add(Percent, 0, 1);
+		
+		ExtButton xButton = new ExtButton("X", "X", nodeType.NUMBER, 0, tHandler);
+		grid.add(xButton, 0, 7);
+
+		ExtButton openGraph = new ExtButton("GRAPH", "GRAPH", nodeType.UTILITY, 0, tHandler);
+		grid.add(openGraph, 1, 7);
 
 	}
 

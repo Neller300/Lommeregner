@@ -1,127 +1,199 @@
 package calculatorPackage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import calculatorPackage.calculatorTools.nodeType;
 import operatorPackage.*;
 
-public class CalcResult {
-
+public class CalcResult
+{
 
 	public static final Map<String, OperatorMaster> operatorDic;
-	static {
+	static
+	{
 		operatorDic = new HashMap<String, OperatorMaster>();
 		operatorDic.put("+", new OP_addition());
 		operatorDic.put("-", new OP_subtraction());
-		operatorDic.put("/", new OP_multiply());
-		operatorDic.put("*", new OP_division());
+		operatorDic.put("/", new OP_division());
+		operatorDic.put("*", new OP_multiply());
 		operatorDic.put("\u00B2", new OP_squared());
 		operatorDic.put("\u221A", new OP_sqrRoot());
 	}
+
 	// String CalcResult (List<InputNode> expression)
-	String CalcFinalResult (List<InputNode> expression) {
-		
-		// While (expression > 1)
-		while(expression.size() > 1) {
-			
-			int highestPriority = 0;
-			InputNode bestCandidate=null;
-			
-			// foreach (InputNode aNode in expression)
-			for(InputNode aNode : expression) 
+	public static String CalcFinalResult(List<InputNode> expression)
+	{
+		//to keep precedence, start with leftmost part of expression
+		InputNode currentNode = expression.get(0);
+
+		//until a single node remains, keep calculating parts of expression
+		while (currentNode.left != null || currentNode.right != null)
+		{
+			//go through neighbors in the right direction until a closing parenthesis is meet
+			if (currentNode.input == ")")
 			{
-				// if(is an operator)
-				if(aNode.itsType == nodeType.OPERATOR) 
+				//find part of expression between parenthesis and calculate that part
+				//remember closing parenthesis
+				InputNode endParenthesis = currentNode;
+				
+				List<InputNode> expPartList = new ArrayList<InputNode>();
+				
+				//set first node to be included in the expressionpart
+				currentNode = currentNode.left;
+
+				// cut of last part of expression
+				currentNode.right = null;
+				
+				//add nodes until opening parenthesis is meet
+				while (currentNode.input != "(")
 				{
-					// Finder højest prioritet
-					if(aNode.nodePriority > highestPriority) 
+					expPartList.add(currentNode);
+					currentNode = currentNode.left;
+				}
+
+				// cut of first part of expression
+				currentNode.right.left = null;
+
+				//call the calcpart function
+				String expressionResult = calcPartResult(expPartList);
+				
+				//put result into first number after opening parethesis and make sure its type is number
+				currentNode.right.input = expressionResult;
+				currentNode.right.itsType= nodeType.NUMBER;
+
+				// find left neighbor of "(" and set neighbors - ie. effectively removing "(" to ")" from the expression and replacing it with the node with the result from calcpart
+				if (currentNode.left != null)
+				{
+					currentNode.left.right = currentNode.right;
+				}
+
+				currentNode.right.left = currentNode.left;
+
+				// find right neighbor of ")"
+				currentNode.right.right = endParenthesis.right;
+				if (endParenthesis.right == null)
+				{
+
+				}
+				else
+				{
+					endParenthesis.right.left = currentNode.right;
+				}
+
+				currentNode = currentNode.right;
+			}
+
+			//if current nodes right is null, end of expression, current node now contains the final result
+			if (currentNode.right == null)
+			{
+				return currentNode.input;
+			}
+			//go to next neighbor to the right
+			currentNode = currentNode.right;
+		}
+		return "Calculation invalid";
+	}
+
+	public static String calcPartResult(List<InputNode> expression)
+	{
+		//since expression nodes are in reverse order, select last to get first
+		InputNode startNode = expression.get(expression.size() - 1);
+		
+		// While startNode has neighbors, reduce expression
+		while (!(startNode.left == null && startNode.right == null))
+		{
+			//find FIRST candidate with the highest priority (ensures precedence in both operator and in left-to-right precedence)
+			int highestPriority = 0;
+			InputNode bestCandidate = null;
+			InputNode currentCandidate = startNode;
+
+			// go through each right neighbor until a null is reached
+			while (currentCandidate != null)
+			{
+				// only check operators
+				if (currentCandidate.itsType == nodeType.OPERATOR)
+				{
+					//get operator priority from hashmap
+					int currentPriority = operatorDic.get(currentCandidate.input).getPriority();
+					//if higher priority, set as bestcandidate
+					if (currentPriority > highestPriority)
 					{
-						bestCandidate = aNode;
-						highestPriority = aNode.nodePriority;
+						bestCandidate = currentCandidate;
+						highestPriority = currentPriority;
 					}
 				}
+				currentCandidate = currentCandidate.right;
 			}
-						// brug hash til at finde rigtig operator
+			//make sure a bestcandidate was selected
+			if (bestCandidate == null)
+			{
+				System.out.println("WARNING!");
+				return "Calculations failed, check expression";
+			}
 			
-						Double leftVal = 0d; 
-						Double rightVal = 0d;
-						
-						// check naboer. if left or right nabo is an operator or null inset "0"
-						if(bestCandidate.left == null || bestCandidate.left.itsType == nodeType.OPERATOR) {
-						}
-						else {
-							leftVal = Double.parseDouble(bestCandidate.left.input);
-						}
-						
-						if(bestCandidate.right == null || bestCandidate.right.itsType == nodeType.OPERATOR) {
-						}
-						else {
-							rightVal = Double.parseDouble(bestCandidate.right.input);
-						
-						// string tempVal = operator.calc(left, right). toString
-						String tempVal = operatorDic.get(bestCandidate.input).calc(leftVal, rightVal).toString();
-						// aNode.input = tempVal
-						bestCandidate.input = tempVal;
-						// aNode.isoperator = false
-						bestCandidate.itsType = nodeType.NUMBER;
-							
-					}
-				
-						boolean keepLeft=true;
-						boolean keepRight=true;
-				
-				// Look left
-				// if (aNode.left != null)
-				if(bestCandidate.left != null) {
-					// (aNode.left.isoperator == false)
-					if (bestCandidate.left.itsType == nodeType.OPERATOR)
-					{
-						//nothing
-					}
-					else
-					{
-						keepLeft=false;
-					}
-				// if (aNode.left.left != null)
-				if(bestCandidate.left.left != null) {
-					// (aNode.left.left.right = aNode)
-					bestCandidate.left.left.right = bestCandidate;
+			//set startval of left and right numbers for operator
+			Double leftVal = 0d;
+			Double rightVal = 0d;
+			// check neighbors. if left or right neighbor is an operator or null keep "0", else use its input
+			if (!(bestCandidate.left == null || bestCandidate.left.itsType == nodeType.OPERATOR))
+			{
+				leftVal = Double.parseDouble(bestCandidate.left.input);	
+			}
+			
+			if (!(bestCandidate.right == null || bestCandidate.right.itsType == nodeType.OPERATOR))
+			{
+				rightVal = Double.parseDouble(bestCandidate.right.input);	
+			}
+			
+			// get the value of the operators calculation, and set operator to number with result as its input
+			String tempVal = operatorDic.get(bestCandidate.input).calc(leftVal, rightVal).toString();
+			bestCandidate.input = tempVal;
+			bestCandidate.itsType = nodeType.NUMBER;
+
+			// Look left to reset neighbors
+			if (bestCandidate.left != null && bestCandidate.left.itsType != nodeType.OPERATOR)
+			{
+				// check if bestcandidate.left is startNode, if so make startNode bestcandidate (ensure left-to-right precendence)
+				if (bestCandidate.left.equals(startNode))
+				{
+					startNode = bestCandidate;
 				}
-			}	
-				// Look right
-				// if (aNode.right != null)
-				if(bestCandidate.right != null) {
-					// (aNode.right.isoperator == false)
-					if(	bestCandidate.right.itsType == nodeType.OPERATOR)
-					{
-						
-					}
-					else
-					{
-						keepRight=false;
-					}
-				// if (aNode.right.right != null)
-				if(bestCandidate.right.right != null) {
-					// (aNode.right.right.left = aNode)
-					bestCandidate.right.right.left = bestCandidate;
+
+				// if operators left numbers left neighbor exists, set relationships
+				if (bestCandidate.left.left != null)
+				{
+					bestCandidate.left.left.right = bestCandidate;
+					bestCandidate.left = bestCandidate.left.left;
+				}
+				else
+				{
+					bestCandidate.left = null;
 				}
 			}
-				// Remove aNode (left, right)
-				if(keepRight==false)
+			else if (bestCandidate.left == null)
+			{
+				//incase of Bestcandidate operators left value is null, make sure startnode is set to bestcandidate
+				startNode = bestCandidate;
+			}
+			
+			// Look right to reset neighbors
+			if (bestCandidate.right != null && bestCandidate.right.itsType != nodeType.OPERATOR)
+			{
+				// if operator right numbers right neighbor exists, set relationships
+				if (bestCandidate.right.right != null)
 				{
-					expression.remove(bestCandidate.right);
+					bestCandidate.right.right.left = bestCandidate;
+					bestCandidate.right = bestCandidate.right.right;
 				}
-				
-				if(keepLeft==false)
+				else
 				{
-					expression.remove(bestCandidate.left);
+					bestCandidate.right = null;
 				}
-				
-				
-		}		//return the last node in the list
-				return expression.get(0).input;	
+			}
+		}
+		return startNode.input;
 	}
 }

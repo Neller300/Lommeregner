@@ -1,5 +1,7 @@
 package calculatorPackage;
 
+import org.omg.PortableServer.ThreadPolicyOperations;
+
 import calculatorPackage.calculatorTools.nodeType;
 
 public class InputNode
@@ -28,6 +30,10 @@ public class InputNode
 	}
 	
 	//make copyconstructor//maybe not needed
+	public InputNode(InputNode oldNode)
+	{
+		this(oldNode.input, oldNode.itsType, oldNode.operatorDirection);
+	}
 	
 	//add method to append input with newinput
 	public void addInput(String newInput, boolean append)
@@ -51,4 +57,26 @@ public class InputNode
 	{
 		operatorDirection=newDirection;
 	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if (other == null)
+			return false;
+		if (other == this)
+			return true;
+		if (!(other instanceof InputNode))
+			return false;
+		return false;
+		/*InputNodes otherMyClass = (InputNodes) other;
+		if (currentPos == otherMyClass.currentPos)
+		{
+			return true;
+		} else
+		{
+			return false;
+		}*/
+	}
+	
+	
 }

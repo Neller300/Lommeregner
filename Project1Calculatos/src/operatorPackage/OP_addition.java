@@ -4,6 +4,7 @@ public class OP_addition extends OperatorMaster
 {
 	private static final int priority=1;
 	
+	
 	public Double calc(Double par1, Double par2)
 	{
 		return par1+par2;

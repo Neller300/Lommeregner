@@ -2,137 +2,182 @@ package calculatorPackage;
 
 import java.util.*;
 
+import calculatorPackage.calculatorTools.displayType;
 import calculatorPackage.calculatorTools.nodeType;
+import graphPackage.GraphWindowHandler;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.ConstraintsBase;
 
 public class InputHandler
 {
 	List<InputNode> trackedInput = new ArrayList<InputNode>();
+	
+	public List<InputNode> calculatorInput = new ArrayList<InputNode>();
+	
+	public List<InputNode> graph1Input = new ArrayList<InputNode>();
+	public List<InputNode> graph2Input = new ArrayList<InputNode>();
+	public List<InputNode> graph3Input = new ArrayList<InputNode>();
+	
+	public GraphWindowHandler graph = new GraphWindowHandler();
+	public static boolean graphMode=false;
+	
+	public displayType currentDisplayMode=displayType.CALCULATOR;
 
 	public void handleInput(nodeType type, String input, int direction)
 	{
-
-		System.out.println("buttonPressed "+direction+" "+input+" "+type.toString());
-		// Branching
-		// if number
+		InputNode lastNode=null;
+		if(!trackedInput.isEmpty())
+		{
+			lastNode=trackedInput.get(trackedInput.size() - 1);
+		}
+		
 		if (type == nodeType.NUMBER)
 		{
-			if (input == ".")
+			//check if x
+			if(input == "X")
 			{
-
+				if (lastNode!=null && lastNode.itsType == nodeType.NUMBER)
+				{
+					// append to nodes input
+					trackedInput.add(new InputNode("*", nodeType.OPERATOR, 0));
+					trackedInput.add(new InputNode("X", type, direction));
+				}
+				else 
+				{
+					trackedInput.add(new InputNode("X", type, direction));
+				}
+			}
+			
+			else if (input == ".")
+			{
 				// if(currentnode.input.contains(".")
-				if (trackedInput.isEmpty() || trackedInput.get(trackedInput.size() - 1).itsType == nodeType.OPERATOR)
+				if (lastNode==null || lastNode.itsType == nodeType.OPERATOR || lastNode.itsType == nodeType.PARENTHESIS)
 				{
 					// create new node and use input "0."
-					InputNode number = new InputNode("0.", type, direction);
-					trackedInput.add(number);
+					trackedInput.add(new InputNode("0.", type, direction));
 				}
-				else if (trackedInput.get(trackedInput.size() - 1).input.contains("."))
+				else if (lastNode.input.contains("."))
 				{
-					// return;
 					return;
 				}
-
-				// if(trackedinput.isempty ||trackedinput.isoperator)
-				// else
 				else
 				{
 					// append to nodes input
-					trackedInput.get(trackedInput.size() - 1).addInput(input, true);
+					lastNode.addInput(input, true);
 				}
 			}
-			// if(trackedinput.empty || trackedinput.isoperator
-			else if (trackedInput.isEmpty() || trackedInput.get(trackedInput.size() - 1).itsType == nodeType.OPERATOR)
-			{
-				// create node, add to last
-				InputNode number = new InputNode(input, type, direction);
-				trackedInput.add(number);
-
-			}
-			// else
-			else
+			// if just a number, check if lastnode is already a number and append to it, or create a new
+			else if (lastNode!=null && lastNode.itsType == nodeType.NUMBER)
 			{
 				// append to nodes input
-				trackedInput.get(trackedInput.size() - 1).addInput(input, true);
+				lastNode.addInput(input, true);
 			}
-
-			
+			else
+			{
+				// create node, add to last
+				trackedInput.add(new InputNode(input, type, direction));
+			}
+			DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
 		}
 
 		// if operator
-		if (type == nodeType.OPERATOR)
+		else if (type == nodeType.OPERATOR)
 		{
-			// if(trackedinput.isEmpty
-			if (trackedInput.isEmpty() && direction == 1)
+			// if first in list and operator direction is to the right
+			if (lastNode==null && direction == 1)
 			{
-				// create node add to list
-				InputNode operator = new InputNode(input, type, direction);
-				trackedInput.add(operator);
+				trackedInput.add(new InputNode(input, type, direction));
 			}
-
-			// if(trackedinput.isEmpty
-			// if(trackedInput.isEmpty())
-			// {
-			// // create node add to list
-			// InputNode operator = new InputNode(input, type);
-			// trackedInput.add(operator);
-			// }
-
-			// // if(currentnode.isNumber)
-			// if (trackedInput.get(trackedInput.size() - 1).itsType == nodeType.OPERATOR) {
-			// // create node and add to list
-			// InputNode number = new InputNode(input, type);
-			// trackedInput.add(number);
-			// }
-
-			// if(currentnode.isOperator)
-			else if (!trackedInput.isEmpty() && trackedInput.get(trackedInput.size() - 1).itsType == nodeType.OPERATOR)
+			// if lastnode is operator, check compatibility with new operator
+			else if (lastNode!=null && lastNode.itsType == nodeType.OPERATOR)
 			{
-
-				// if(currentnode.direction==l(-1) || direction==m(0))
-				if (trackedInput.get(trackedInput.size() - 1).getOperatorDirection() == -1 && direction == 0)
+				// if last operator is left sided and new is both ex. squared and plus
+				if (lastNode.getOperatorDirection() == -1 && direction == 0)
 				{
-					System.out.println("-1 and 0 called");
-					// create node and add to list
-					InputNode operator = new InputNode(input, type, direction);
-					trackedInput.add(operator);
+					trackedInput.add(new InputNode(input, type, direction));
 				}
-				// if(currentnode.direction==m(0) || direction==r(1))
-				if (trackedInput.get(trackedInput.size() - 1).getOperatorDirection() == 0 && direction == 1)
+				// if last operator is both and new is right sided ex. plus and squareroot
+				else if (lastNode.getOperatorDirection() == 0 && direction == 1)
 				{
-					//System.out.println(""+trackedInput.get(trackedInput.size() - 1).getOperatorDirection());
-					//System.out.println(""+trackedInput.get(trackedInput.size() - 1).itsType.toString() );
-					//System.out.println("0 and 1 called");
-					// create node and add to list
-					InputNode operator = new InputNode(input, type, direction);
-					trackedInput.add(operator);
+					trackedInput.add(new InputNode(input, type, direction));
 				}
 			}
-			else if(!trackedInput.isEmpty() && trackedInput.get(trackedInput.size() - 1).itsType == nodeType.NUMBER)
+			//if number and operator is no right sided(ex. squareRoot), then add operator
+			else if (lastNode!=null && lastNode.itsType == nodeType.NUMBER && direction!=1)
 			{
-				if(direction!=1)
-				{
-					InputNode operator = new InputNode(input, type, direction);
-					trackedInput.add(operator);
-				}
+					trackedInput.add(new InputNode(input, type, direction));
 			}
-			else
+			else if (lastNode!=null && lastNode.itsType == nodeType.PARENTHESIS)
 			{
-				return;
+					trackedInput.add(new InputNode(input, type, direction));
 			}
+			DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
 		}
-		System.out.println("derp");
-		DisplayHandler.updateScreen(trackedInput);
+		
+		else if(type==nodeType.UTILITY)
+		{
+			callUtility(input);
+		}
+	}
+	
+	//switch to find the utility function wanted
+	public void callUtility(String utilityCalled)
+	{
+		switch (utilityCalled)
+		{
+		case "=":
+			enter();
+			break;
+
+		case "CE":
+			clear();
+			break;
+
+		case "\u232B":
+			delete();
+			break;
+			
+		case "(":
+		{
+			InputNode leftParenthesis = new InputNode("(", nodeType.PARENTHESIS, 0);
+			trackedInput.add(leftParenthesis);
+			DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
+			break;
+		}
+			
+		case ")":
+		{
+			InputNode rightParenthesis = new InputNode(")", nodeType.PARENTHESIS, 0);
+			trackedInput.add(rightParenthesis);
+			DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
+			break;
+		}
+		
+		case "GRAPH" :
+		{
+			//open graph window
+			startGraph();
+			break;
+		}
+
+		default:
+			System.out.println("Utility button not implemented!");
+			break;
+		}
 	}
 
-	// void changeSignPressed()
+	//changeSignPressed, changes current numbers sign (-+)
 	public void changeSignPressed(nodeType type, String input)
 	{
 		// if(trackedinput.isempty || currentnode.isOperator)
 		if (trackedInput.isEmpty() || trackedInput.get(trackedInput.size() - 1).itsType == nodeType.OPERATOR)
 		{
 			// create node and add to list
-			//InputNode number = new InputNode(input, type, direction);
-			//trackedInput.add(number);
+			// InputNode number = new InputNode(input, type, direction);
+			// trackedInput.add(number);
 		}
 		// if(currentnode.isNumber)
 		if (trackedInput.get(trackedInput.size() - 1).itsType == nodeType.NUMBER)
@@ -142,56 +187,166 @@ public class InputHandler
 		}
 	}
 
-	// void clear()
+	//clear, removes all input
 	public void clear()
 	{
-		// Clear the input nodes
 		trackedInput.clear();
-		// Update display with empty string
-		// updateScreen();
+		DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
 	}
-
+	
+	//deletes input, one at a time
 	public void delete()
 	{
 		// check if trackedInput is empty
 		if (trackedInput.isEmpty())
 		{
-			// if empty, return
 			return;
 		}
-
-		// if(currentnodeinput<=1)
-		if (trackedInput.get(trackedInput.size() - 1).input.length() <= 1)
+		
+		InputNode lastNode=trackedInput.get(trackedInput.size() - 1);
+		
+		//if lastnode is number, check if input contains more than 1 char, if it does, remove 1 char
+		if(lastNode.itsType==nodeType.NUMBER)
+		{
+			if (lastNode.input.length() <= 1)
+			{
+				trackedInput.remove(trackedInput.size() - 1);
+			}
+			else
+			{
+				lastNode.input = lastNode.input.substring(0, lastNode.input.length()-1);
+			}
+		}
+		else 
 		{
 			// remove node from trackedlist
 			trackedInput.remove(trackedInput.size() - 1);
+		}
+		
+		DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
+	}
 
-		}
-		// else removeCharAt(input.length-1)
-		else
+	public void enter()
+	{
+		if(graphMode)
 		{
-			String tempString = trackedInput.get(trackedInput.size() - 1).input;
-			tempString = tempString.substring(0, tempString.length() - 1);
-			trackedInput.get(trackedInput.size() - 1).input = tempString;
+			return;
 		}
-		// void enterPressed()
-		/*
-		 * public void enterPressed() { // if(trackedinput.isEmpty)
-		 * if(trackedInput.isEmpty()) { // return; return; } // else else {
-		 * //list<inputnodes> templist = new Arraylist<inputnode>();
-		 * 
-		 * } // list<inputnodes> templist = new Arraylist<inputnode>(); // foreach
-		 * oldnode in trackedlist // inputnode newcopy = oldnode.copy(); // add newcopy
-		 * to template // display.show(calcresultfinal(calcParenthesis(templist)));
-		 * 
-		 * }
-		 */
+		//check if empty
+		if(trackedInput.isEmpty())
+		{
+			DisplayHandler.updateScreen("Please input expression", currentDisplayMode);
+			return;
+		}
+		DisplayHandler.updateScreen(CalcResult.CalcFinalResult(prepareListForCalc(trackedInput)), currentDisplayMode);
 	}
 	
-	public void calcParenthesis(List<InputNode> expression)
+	public void startGraph()
 	{
-		//solve parenthesis
-		
-		
+		graph.openGraphWindow(this);
+		graphMode=true;
+		calculatorInput.clear();
+		calculatorInput.addAll(trackedInput);
+		trackedInput.clear();
+		DisplayHandler.updateScreen("Graph Mode Active", currentDisplayMode);
+
 	}
+	
+	public void graphClosed()
+	{
+		graphMode=false;
+		trackedInput=calculatorInput;
+		currentDisplayMode=displayType.CALCULATOR;
+		DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
+	}
+	
+
+	public void setToGraphFieldInput(String callingField, Label fieldLabel)
+	{
+		if(callingField=="Y1")
+		{
+			trackedInput=graph1Input;
+			currentDisplayMode=displayType.Y1;
+			DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
+		}
+		else if(callingField=="Y2")
+		{
+			trackedInput=graph2Input;
+		currentDisplayMode=displayType.Y2;
+		DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
+		}
+		else if(callingField=="Y3")
+		{
+			trackedInput=graph3Input;
+		currentDisplayMode=displayType.Y3;
+		DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
+		}
+	}
+	
+
+	public static List<InputNode> prepareListForCalc(List<InputNode> expression)
+	{
+		List<InputNode> templist = new ArrayList<InputNode>();
+		int leftParenthesis=0;
+		int rightParenthesis=0;
+		
+		
+		templist.add(new InputNode("(", nodeType.PARENTHESIS, 0));
+		
+		for (InputNode oldNode : expression)
+		{
+			templist.add(new InputNode(oldNode));
+		}
+		
+		templist.add(new InputNode(")", nodeType.PARENTHESIS, 0));
+		
+		for (int counter = 0; counter < templist.size(); counter++)
+		{
+			InputNode currentNode = templist.get(counter);
+			if(currentNode.input=="(")
+			{
+				leftParenthesis++;
+			}
+			else if(currentNode.input==")")
+			{
+				rightParenthesis++;
+			}
+			
+			if (counter < 1)
+			{
+				currentNode.left = null;
+				if (counter > templist.size() - 2)
+				{
+					currentNode.right = null;
+				}
+				else
+				{
+					currentNode.right = templist.get(counter + 1);
+				}
+			}
+			else if (counter > templist.size() - 2)
+			{
+				currentNode.right = null;
+				currentNode.left = templist.get(counter - 1);
+			}
+			else
+			{
+				currentNode.left = templist.get(counter - 1);
+				currentNode.right = templist.get(counter + 1);
+			}
+		}
+		//check if parenthesis are correct
+		if(leftParenthesis>rightParenthesis)
+		{
+			//forgot right parenthesis
+		}
+		else if(rightParenthesis>leftParenthesis)
+		{
+			//forgot left parenthesis
+		}
+		
+		return templist;
+	}
+	
+	
 }
