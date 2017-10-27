@@ -1,18 +1,10 @@
 package calculatorPackage;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-
-import graphPackage.GraphWindowHandler;
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.event.EventHandler;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class CalculatorMain extends Application
@@ -37,11 +29,14 @@ public class CalculatorMain extends Application
 			primaryStage.setScene(GUI.getScene());
 			primaryStage.show();
 			
+			Image anotherImage = new Image("file:images.png");
+					primaryStage.getIcons().add(anotherImage);
+			
 			//primaryStage.setScene(scene);
 			//scene.getStylesheets().add(mainStarter.class.getResource("styleSheetTest.css").toExternalForm());
 			//primaryStage.show();
 			
 			
-	}
+		}}
 
-}
+

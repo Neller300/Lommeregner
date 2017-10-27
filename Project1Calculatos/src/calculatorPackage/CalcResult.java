@@ -16,11 +16,18 @@ public class CalcResult
 	{
 		operatorDic = new HashMap<String, OperatorMaster>();
 		operatorDic.put("+", new OP_addition());
-		operatorDic.put("-", new OP_subtraction());
+		operatorDic.put("―", new OP_subtraction());
 		operatorDic.put("/", new OP_division());
 		operatorDic.put("*", new OP_multiply());
 		operatorDic.put("\u00B2", new OP_squared());
 		operatorDic.put("\u221A", new OP_sqrRoot());
+		operatorDic.put("Tan⁻¹", new OP_invTan());
+		operatorDic.put("Sin⁻¹", new OP_invSin());
+		operatorDic.put("Cos⁻¹", new OP_invCos());
+		operatorDic.put("^", new OP_exponent());
+		operatorDic.put("Tan", new OP_tan());
+		operatorDic.put("Sin", new OP_sinus());
+		operatorDic.put("cos", new OP_cos());
 	}
 
 	// String CalcResult (List<InputNode> expression)
