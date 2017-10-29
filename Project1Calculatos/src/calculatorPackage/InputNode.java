@@ -15,12 +15,6 @@ public class InputNode
 	public nodeType itsType;
     private int operatorDirection;
 	
-	
-	//int priority - priority used for precedence calculation
-	//inputNode left - its left neighbor
-	//inputNode Right - its right neighbor
-	//boolean isOperator - true if operator
-	
 	//create constructor taking arguments to fill instance variables
 	public InputNode(String newInput, nodeType newType, int newDirection)
 	{
@@ -29,7 +23,7 @@ public class InputNode
 		setOperatorDirection(newDirection);
 	}
 	
-	//make copyconstructor//maybe not needed
+	//make copyconstructor
 	public InputNode(InputNode oldNode)
 	{
 		this(oldNode.input, oldNode.itsType, oldNode.operatorDirection);
@@ -68,15 +62,5 @@ public class InputNode
 		if (!(other instanceof InputNode))
 			return false;
 		return false;
-		/*InputNodes otherMyClass = (InputNodes) other;
-		if (currentPos == otherMyClass.currentPos)
-		{
-			return true;
-		} else
-		{
-			return false;
-		}*/
 	}
-	
-	
 }

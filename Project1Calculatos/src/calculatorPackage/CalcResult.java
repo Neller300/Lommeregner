@@ -16,23 +16,29 @@ public class CalcResult
 	{
 		operatorDic = new HashMap<String, OperatorMaster>();
 		operatorDic.put("+", new OP_addition());
-		operatorDic.put("―", new OP_subtraction());
+		operatorDic.put("‒", new OP_subtraction());
 		operatorDic.put("/", new OP_division());
-		operatorDic.put("*", new OP_multiply());
+		operatorDic.put("·", new OP_multiply());
 		operatorDic.put("\u00B2", new OP_squared());
 		operatorDic.put("\u221A", new OP_sqrRoot());
-		operatorDic.put("Tan⁻¹", new OP_invTan());
+		operatorDic.put("Sin", new OP_sinus());
+		operatorDic.put("Cos", new OP_cos());
+		operatorDic.put("Tan", new OP_tan());
 		operatorDic.put("Sin⁻¹", new OP_invSin());
 		operatorDic.put("Cos⁻¹", new OP_invCos());
+		operatorDic.put("Tan⁻¹", new OP_invTan());
 		operatorDic.put("^", new OP_exponent());
-		operatorDic.put("Tan", new OP_tan());
-		operatorDic.put("Sin", new OP_sinus());
-		operatorDic.put("cos", new OP_cos());
 	}
 
 	// String CalcResult (List<InputNode> expression)
 	public static String CalcFinalResult(List<InputNode> expression)
 	{
+		//check if expressionlist is empty, if so, bad parenthesis
+		if(expression.isEmpty())
+		{
+			return "Missing Parenthesis";
+		}
+		
 		//to keep precedence, start with leftmost part of expression
 		InputNode currentNode = expression.get(0);
 
@@ -46,18 +52,15 @@ public class CalcResult
 				//remember closing parenthesis
 				InputNode endParenthesis = currentNode;
 				
-				List<InputNode> expPartList = new ArrayList<InputNode>();
-				
 				//set first node to be included in the expressionpart
 				currentNode = currentNode.left;
 
 				// cut of last part of expression
 				currentNode.right = null;
 				
-				//add nodes until opening parenthesis is meet
+				//find startNode
 				while (currentNode.input != "(")
 				{
-					expPartList.add(currentNode);
 					currentNode = currentNode.left;
 				}
 
@@ -65,7 +68,7 @@ public class CalcResult
 				currentNode.right.left = null;
 
 				//call the calcpart function
-				String expressionResult = calcPartResult(expPartList);
+				String expressionResult = calcPartResult(currentNode.right);
 				
 				//put result into first number after opening parethesis and make sure its type is number
 				currentNode.right.input = expressionResult;
@@ -96,7 +99,22 @@ public class CalcResult
 			//if current nodes right is null, end of expression, current node now contains the final result
 			if (currentNode.right == null)
 			{
-				return currentNode.input;
+				//incase of a whole number, remove .0 resulting from double parse
+				if(currentNode.input.length()<=3)
+				{
+					return currentNode.input;
+				}
+					
+				String result= currentNode.input;
+				String temp = result.substring(result.length() - 2);
+			
+				if(temp.contentEquals(".0"))
+				{
+					
+					result=result.substring(0, result.length() - 2);
+				}
+				
+				return result;
 			}
 			//go to next neighbor to the right
 			currentNode = currentNode.right;
@@ -104,10 +122,10 @@ public class CalcResult
 		return "Calculation invalid";
 	}
 
-	public static String calcPartResult(List<InputNode> expression)
+	public static String calcPartResult(InputNode firstNode)
 	{
 		//since expression nodes are in reverse order, select last to get first
-		InputNode startNode = expression.get(expression.size() - 1);
+		InputNode startNode = firstNode;
 		
 		// While startNode has neighbors, reduce expression
 		while (!(startNode.left == null && startNode.right == null))

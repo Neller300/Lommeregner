@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -24,42 +25,56 @@ public class GUICreator
 {
 	public Text text;
 
-	public Scene theScene;
+	private Scene theScene;
 	
 	public DisplayHandler theDisplay;
 	
 
 	public GUICreator(InputHandler tHandler)
 	{
-
+		//setup grid
 		GridPane grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
 		grid.setPadding(new Insets(15, 15, 15, 15));
-
-		StackPane stack = new StackPane();
-		Rectangle leBox = new Rectangle(430, 165, Color.BLACK);
-		leBox.setArcHeight(8);
-		leBox.setArcWidth(8);
-		stack.getChildren().addAll(leBox);
 		
+		//setup field view backdrop
+		StackPane stack = new StackPane();
+		Rectangle backgroundBox = new Rectangle(428, 165, Color.BLACK);
+		
+		DropShadow shadow = new DropShadow();
+		shadow.setOffsetX(0);
+		shadow.setOffsetY(0);
+		shadow.setRadius(8);
+		
+		backgroundBox.setEffect(shadow);
+		backgroundBox.setStroke(Color.LIGHTGREY);
+		backgroundBox.setStrokeWidth(2);
+		backgroundBox.setArcHeight(8);
+		backgroundBox.setArcWidth(8);
+		
+		stack.getChildren().add(backgroundBox);
+		
+		//setup fieldview textfield
 		text = new Text();
 		text.setFill(Color.WHITE);
 		text.setStyle("-fx-font: 25 Consolas; -fx-font-weight: bold;");
-		text.setWrappingWidth(430);
+		text.setWrappingWidth(416);
 		
-		
+		//set holder for text
 		HBox textHolder = new HBox();
 		textHolder.setAlignment(Pos.TOP_LEFT);
 		textHolder.getChildren().add(text);
 		stack.getChildren().add(textHolder);
+		stack.setMargin(textHolder, new Insets(6,0,0, 8));
 		grid.add(stack, 0, 0, 4, 1);
 
 		DisplayHandler.theGUICreator=this;
 		
+		//create the scene
 		theScene = new Scene(grid, 460, 840);
 		
-	
+		//create the buttons 
 		ExtButton leftParenthesis = new ExtButton("(", "(", nodeType.UTILITY, 0, tHandler);
 		grid.add(leftParenthesis, 0, 1);
 		
@@ -75,7 +90,7 @@ public class GUICreator
 		ExtButton One = new ExtButton("1", "1", nodeType.NUMBER, 0, tHandler);
 		grid.add(One, 0, 5);
 		
-		ExtButton ChangeSign = new ExtButton("-", "±", nodeType.NUMBER, 0, tHandler);
+		ExtButton ChangeSign = new ExtButton("±", "±", nodeType.UTILITY, 0, tHandler);
 		grid.add(ChangeSign, 0, 6);
 		
 		ExtButton xButton = new ExtButton("X", "X", nodeType.NUMBER, 0, tHandler);
@@ -139,10 +154,10 @@ public class GUICreator
 		ExtButton Divide = new ExtButton("/", "/", nodeType.OPERATOR, 0, tHandler);
 		grid.add(Divide, 3, 2);
 
-		ExtButton Multiply = new ExtButton("*", "*", nodeType.OPERATOR, 0, tHandler);
+		ExtButton Multiply = new ExtButton("·", "·", nodeType.OPERATOR, 0, tHandler);
 		grid.add(Multiply, 3, 3);
 
-		ExtButton Subtract = new ExtButton("―", "-", nodeType.OPERATOR, 0, tHandler);
+		ExtButton Subtract = new ExtButton("‒", "-", nodeType.OPERATOR, 0, tHandler);
 		grid.add(Subtract, 3, 4);
 
 		ExtButton Add = new ExtButton("+", "+", nodeType.OPERATOR, 0, tHandler);
@@ -157,7 +172,7 @@ public class GUICreator
 		ExtButton InvTan = new ExtButton("Tan⁻¹", "Tan⁻¹", nodeType.OPERATOR, 1, tHandler);
 		grid.add(InvTan, 3, 8);
 
-		
+		//set keyhandling
 		theScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -193,19 +208,16 @@ public class GUICreator
 				map.put(KeyCode.ENTER, Equal);
 				map.put(KeyCode.BACK_SPACE, Delete);
 				map.put(KeyCode.ESCAPE, Clear);
+				map.put(KeyCode.DELETE, Clear);
 				map.put(KeyCode.PERIOD, Period);
 				map.put(KeyCode.DECIMAL, Period);
 				map.put(KeyCode.I, leftParenthesis);
 				map.put(KeyCode.O, rightParenthesis);
 				
 				KeyCode keyCode = event.getCode();
-				
-				System.out.println("key pressed: " + keyCode);
-				
+			
 				if (map.containsKey(keyCode)) {
-					System.out.println("pressed key from hashmap");
 					ExtButton button = map.get(keyCode);
-					
 					button.activate();
 					button.requestFocus();
 				}

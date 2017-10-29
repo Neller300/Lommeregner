@@ -13,21 +13,40 @@ import javafx.scene.layout.ConstraintsBase;
 
 public class InputHandler
 {
+	//trackedinput contains the current expression manipulated by calculator
 	List<InputNode> trackedInput = new ArrayList<InputNode>();
 	
+	//list containing expressions used depending on calculator being used as calculator or to input graphs in graph tool
 	public List<InputNode> calculatorInput = new ArrayList<InputNode>();
-	
 	public List<InputNode> graph1Input = new ArrayList<InputNode>();
 	public List<InputNode> graph2Input = new ArrayList<InputNode>();
 	public List<InputNode> graph3Input = new ArrayList<InputNode>();
 	
+	//graph items
 	public GraphWindowHandler graph = new GraphWindowHandler();
 	public static boolean graphMode=false;
 	
+	//calculator states
+	private boolean showingResult=false;
 	public displayType currentDisplayMode=displayType.CALCULATOR;
 
 	public void handleInput(nodeType type, String input, int direction)
 	{
+		//check if result is shown
+		if(showingResult)
+		{
+			showingResult=false;
+			DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
+			return;
+		}
+		
+		if(checkMaxInput())
+		{
+			//max char limit reached
+			delete();
+			return;
+		}
+		
 		InputNode lastNode=null;
 		if(!trackedInput.isEmpty())
 		{
@@ -39,10 +58,14 @@ public class InputHandler
 			//check if x
 			if(input == "X")
 			{
+				if(!graphMode)
+				{
+					return;
+				}
 				if (lastNode!=null && lastNode.itsType == nodeType.NUMBER)
 				{
 					// append to nodes input
-					trackedInput.add(new InputNode("*", nodeType.OPERATOR, 0));
+					trackedInput.add(new InputNode("·", nodeType.OPERATOR, 0));
 					trackedInput.add(new InputNode("X", type, direction));
 				}
 				else 
@@ -50,6 +73,7 @@ public class InputHandler
 					trackedInput.add(new InputNode("X", type, direction));
 				}
 			}
+			
 			
 			else if (input == ".")
 			{
@@ -142,6 +166,15 @@ public class InputHandler
 			
 		case "(":
 		{
+			if(!trackedInput.isEmpty())
+			{
+				if(trackedInput.get(trackedInput.size() - 1).itsType==nodeType.NUMBER)
+				{
+					//add mul
+					trackedInput.add(new InputNode("·", nodeType.OPERATOR, 0));
+				}
+			}
+			
 			InputNode leftParenthesis = new InputNode("(", nodeType.PARENTHESIS, 0);
 			trackedInput.add(leftParenthesis);
 			DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
@@ -162,6 +195,13 @@ public class InputHandler
 			startGraph();
 			break;
 		}
+		
+		case "±" :
+		{
+			//open graph window
+			changeSignPressed();
+			break;
+		}
 
 		default:
 			System.out.println("Utility button not implemented!");
@@ -170,21 +210,31 @@ public class InputHandler
 	}
 
 	//changeSignPressed, changes current numbers sign (-+)
-	public void changeSignPressed(nodeType type, String input)
+	public void changeSignPressed()
 	{
 		// if(trackedinput.isempty || currentnode.isOperator)
 		if (trackedInput.isEmpty() || trackedInput.get(trackedInput.size() - 1).itsType == nodeType.OPERATOR)
 		{
 			// create node and add to list
+			trackedInput.add(new InputNode("-", nodeType.NUMBER, 0));
 			// InputNode number = new InputNode(input, type, direction);
 			// trackedInput.add(number);
 		}
 		// if(currentnode.isNumber)
-		if (trackedInput.get(trackedInput.size() - 1).itsType == nodeType.NUMBER)
+		else if (trackedInput.get(trackedInput.size() - 1).itsType == nodeType.NUMBER)
 		{
+			if(trackedInput.get(trackedInput.size() - 1).input.contains("-"))
+			{
+				trackedInput.get(trackedInput.size() - 1).input=trackedInput.get(trackedInput.size() - 1).input.substring(1);
+			}
+			else
+			{
 			// prepend "-" to current input
 			trackedInput.get(trackedInput.size() - 1).addInput("-", false);
+			}
 		}
+		
+		DisplayHandler.updateScreen(trackedInput, currentDisplayMode);
 	}
 
 	//clear, removes all input
@@ -238,6 +288,7 @@ public class InputHandler
 			DisplayHandler.updateScreen("Please input expression", currentDisplayMode);
 			return;
 		}
+		showingResult=true;
 		DisplayHandler.updateScreen(CalcResult.CalcFinalResult(prepareListForCalc(trackedInput)), currentDisplayMode);
 	}
 	
@@ -336,17 +387,29 @@ public class InputHandler
 			}
 		}
 		//check if parenthesis are correct
-		if(leftParenthesis>rightParenthesis)
+		if(!(leftParenthesis==rightParenthesis))
 		{
-			//forgot right parenthesis
+			//no parenthesis
+			templist.clear();
 		}
-		else if(rightParenthesis>leftParenthesis)
-		{
-			//forgot left parenthesis
-		}
-		
 		return templist;
 	}
 	
-	
+	public boolean checkMaxInput()
+	{
+		int totalChars=0;
+		for (InputNode inputNode : trackedInput)
+		{
+			totalChars=totalChars+inputNode.input.length();
+		}
+		
+		if(totalChars>149)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

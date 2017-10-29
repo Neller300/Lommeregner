@@ -1,6 +1,8 @@
 package graphPackage;
 
+import java.beans.Expression;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import calculatorPackage.CalcResult;
@@ -21,20 +23,20 @@ public class graphDraw
 		
 		if(Y1!=null)
 		{
-			drawGraph(Y1.graphExpression, (double)GraphWindowHandler.currentXmin, (double)GraphWindowHandler.currentXmax, GraphWindowHandler.theInputHandler.graph, Y1.xNodes);
+			drawGraph(Y1.graphExpression, (double)GraphWindowHandler.currentXmin, (double)GraphWindowHandler.currentXmax, GraphWindowHandler.theInputHandler.graph, Y1.xNodes, Color.DARKRED);
 		}
 		if(Y2!=null)
 		{
-			drawGraph(Y2.graphExpression, (double)GraphWindowHandler.currentXmin, (double)GraphWindowHandler.currentXmax, GraphWindowHandler.theInputHandler.graph, Y2.xNodes);
+			drawGraph(Y2.graphExpression, (double)GraphWindowHandler.currentXmin, (double)GraphWindowHandler.currentXmax, GraphWindowHandler.theInputHandler.graph, Y2.xNodes, Color.DARKBLUE );
 		}
 		if(Y3!=null)
 		{
-			drawGraph(Y3.graphExpression, (double)GraphWindowHandler.currentXmin, (double)GraphWindowHandler.currentXmax, GraphWindowHandler.theInputHandler.graph, Y3.xNodes);
+			drawGraph(Y3.graphExpression, (double)GraphWindowHandler.currentXmin, (double)GraphWindowHandler.currentXmax, GraphWindowHandler.theInputHandler.graph, Y3.xNodes, Color.DARKGREEN);
 		}
 		
 	}
 	
-	public static void drawGraph(List<InputNode> expression, double start, double end, GraphWindowHandler theHandler, List<InputNode> xNodes)
+	public static void drawGraph(List<InputNode> expression, double start, double end, GraphWindowHandler theHandler, List<InputNode> xNodes, Color lineColor)
 	{
 		//first, find x 
 		double deltaX=(end-start)/150;
@@ -62,7 +64,7 @@ public class graphDraw
 			//draw line
 			theHandler.gc.setLineWidth(2);
 			
-			theHandler.gc.setStroke(Color.DARKRED);
+			theHandler.gc.setStroke(lineColor);
 			theHandler.gc.strokeLine(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());
 			
 			//set old startpoint to current endpoint

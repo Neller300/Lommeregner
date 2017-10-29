@@ -9,34 +9,33 @@ import javafx.stage.Stage;
 
 public class CalculatorMain extends Application
 {
-		public static void main(String[] args)
+	public static void main(String[] args)
+	{
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage)
+	{
+		primaryStage.setTitle("Pro-1-Calculator");
+
+		// create input Handler
+		InputHandler theIHandler = new InputHandler();
+
+		// create the visuals
+		GUICreator GUI = new GUICreator(theIHandler);
+		primaryStage.setScene(GUI.getScene());
+
+		try
 		{
-			launch(args);
+			Image anotherImage = new Image("file:src/images.png");
+			primaryStage.getIcons().add(anotherImage);
+		}
+		catch (Exception e)
+		{
+			System.out.println(e);
 		}
 
-		@Override
-		public void start(Stage primaryStage)
-		{
-			primaryStage.setTitle("Pro-1-Calculator");
-			//Group abRoot = new Group();
-			
-			
-			// create input Handler
-			InputHandler theIHandler = new InputHandler();
-
-			// create the visuals
-			GUICreator GUI = new GUICreator(theIHandler);
-			primaryStage.setScene(GUI.getScene());
-			primaryStage.show();
-			
-			Image anotherImage = new Image("file:images.png");
-					primaryStage.getIcons().add(anotherImage);
-			
-			//primaryStage.setScene(scene);
-			//scene.getStylesheets().add(mainStarter.class.getResource("styleSheetTest.css").toExternalForm());
-			//primaryStage.show();
-			
-			
-		}}
-
-
+		primaryStage.show();
+	}
+}
