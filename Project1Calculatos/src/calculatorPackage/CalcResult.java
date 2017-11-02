@@ -100,7 +100,7 @@ public class CalcResult
 			if (currentNode.right == null)
 			{
 				//incase of a whole number, remove .0 resulting from double parse
-				if(currentNode.input.length()<=3)
+				if(currentNode.input.length()<=2)
 				{
 					return currentNode.input;
 				}

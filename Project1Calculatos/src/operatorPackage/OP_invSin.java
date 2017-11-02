@@ -2,7 +2,7 @@ package operatorPackage;
 
 public class OP_invSin extends OperatorMaster
 {
-	private static final int priority=1;
+	private static final int priority=4;
 	
 	
 	public Double calc(Double par1, Double par2)

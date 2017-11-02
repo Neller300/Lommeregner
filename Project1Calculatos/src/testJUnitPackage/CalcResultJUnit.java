@@ -81,7 +81,7 @@ public class CalcResultJUnit
 		InputNode number1 = new InputNode("2", nodeType.NUMBER, 0);
 		testExpression.add(number1);
 		
-		InputNode mulSign = new InputNode("*", nodeType.OPERATOR, 0);
+		InputNode mulSign = new InputNode("·", nodeType.OPERATOR, 0);
 		testExpression.add(mulSign);
 
 		InputNode leftParenthesis = new InputNode("(", nodeType.PARENTHESIS, 0);
@@ -117,7 +117,7 @@ public class CalcResultJUnit
 		InputNode squaredSign = new InputNode("\u00B2", nodeType.OPERATOR, -1);
 		testExpression.add(squaredSign);
 
-		InputNode mulSign = new InputNode("*", nodeType.OPERATOR, 0);
+		InputNode mulSign = new InputNode("·", nodeType.OPERATOR, 0);
 		testExpression.add(mulSign);
 		
 		InputNode rootSign = new InputNode("\u221A", nodeType.OPERATOR, 1);
@@ -141,13 +141,13 @@ public class CalcResultJUnit
 		InputNode number1 = new InputNode("3", nodeType.NUMBER, 0);
 		testExpression.add(number1);
 		
-		InputNode subSign = new InputNode("-", nodeType.OPERATOR, 0);
+		InputNode subSign = new InputNode("‒", nodeType.OPERATOR, 0);
 		testExpression.add(subSign);
 		
 		InputNode number2 = new InputNode("2", nodeType.NUMBER, 0);
 		testExpression.add(number2);
 
-		InputNode mulSign = new InputNode("*", nodeType.OPERATOR, 0);
+		InputNode mulSign = new InputNode("·", nodeType.OPERATOR, 0);
 		testExpression.add(mulSign);
 		
 		InputNode number3 = new InputNode("4", nodeType.NUMBER, 0);
@@ -195,7 +195,7 @@ public class CalcResultJUnit
 		InputNode number1 = new InputNode("2", nodeType.NUMBER, 0);
 		testExpression.add(number1);
 		
-		InputNode mulSign = new InputNode("*", nodeType.OPERATOR, 0);
+		InputNode mulSign = new InputNode("·", nodeType.OPERATOR, 0);
 		testExpression.add(mulSign);
 
 		InputNode number2 = new InputNode("3", nodeType.NUMBER, 0);
@@ -204,7 +204,7 @@ public class CalcResultJUnit
 		InputNode rightParenthesis1 = new InputNode(")", nodeType.PARENTHESIS, 0);
 		testExpression.add(rightParenthesis1);
 		
-		InputNode mulSign2 = new InputNode("*", nodeType.OPERATOR, 0);
+		InputNode mulSign2 = new InputNode("·", nodeType.OPERATOR, 0);
 		testExpression.add(mulSign2);
 		
 		InputNode leftParenthesis3 = new InputNode("(", nodeType.PARENTHESIS, 0);
@@ -213,7 +213,7 @@ public class CalcResultJUnit
 		InputNode number3 = new InputNode("4", nodeType.NUMBER, 0);
 		testExpression.add(number3);
 		
-		InputNode subSign = new InputNode("-", nodeType.OPERATOR, 0);
+		InputNode subSign = new InputNode("‒", nodeType.OPERATOR, 0);
 		testExpression.add(subSign);
 		
 		InputNode number4 = new InputNode("0.5", nodeType.NUMBER, 0);
